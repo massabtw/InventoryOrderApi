@@ -1,11 +1,7 @@
-﻿using InventoryOrderAPI.Data;
-using InventoryOrderAPI.Extensions;
+﻿using InventoryOrderAPI.Extensions;
 using InventoryOrderAPI.Interfaces;
 using InventoryOrderAPI.Models.Product;
-using InventoryOrderAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-
-
 
 namespace InventoryOrderAPI.Controllers
 {
@@ -15,7 +11,7 @@ namespace InventoryOrderAPI.Controllers
     {
         private readonly IProductService _productService;
 
-        public ProductController(ProductRepository productRepository, IProductService productService )
+        public ProductController(IProductService productService)
         {
             _productService = productService;
         }
@@ -30,72 +26,29 @@ namespace InventoryOrderAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-            try
-            {
-                var result = await _productRepository.GetAllAsync();
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _productService.GetAllAsync();
+            return result.Ok();
         }
 
         [HttpGet("{id}")]
-        public async Task <IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var result = await _productRepository.GetByIdAsync(id);
-
-            try
-            {
-                if(result == null)
-                {
-                    return NotFound("Não encontrado");
-                }
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _productService.GetByIdAsync(id);
+            return result.Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var result = await _productRepository.GetByIdAsync(id);
-            if (result == null)
-                return NotFound("Erro 404");
-            try
-            {
-                await _productRepository.DeleteAsync(id);
-                return Ok("Pedido deletado com sucesso");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _productService.DeleteAsync(id);
+            return result.NoContent();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, UpdateProductRequest request)
+        public async Task<IActionResult> UpdateAsync(int id, UpdateProductRequestModel request)
         {
-            try
-            {
-            var result = await _productRepository.GetByIdAsync(id);
-            if (result == null)
-                return NotFound("Pedido não encontrado");
-
-            result.UpdateDetails(request.Name, request.Price, request.Stock);
-            await _productRepository.UpdateAsync(result);
-            return Ok();
-            }
-
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _productService.UpdateAsync(id, request);
+            return result.Ok();
         }
-        
     }
 }

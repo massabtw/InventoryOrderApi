@@ -1,10 +1,9 @@
-﻿using InventoryOrderAPI.Data;
-using InventoryOrderAPI.Helpers;
+﻿using GrupoMadero.Common.Results;
+using InventoryOrderAPI.Data;
 using InventoryOrderAPI.Entities;
-using InventoryOrderAPI.Models.Product;
-using Microsoft.AspNetCore.Mvc;
-using GrupoMadero.Common.Results;
+using InventoryOrderAPI.Helpers;
 using InventoryOrderAPI.Interfaces;
+using InventoryOrderAPI.Models.Product;
 
 namespace InventoryOrderAPI.Services
 {
@@ -26,8 +25,8 @@ namespace InventoryOrderAPI.Services
                 if (request.Price < 0)
                     return ErrorMessages.InvalidPrice(request.Price);
 
-                if(request.StockQuantity <= 0)
-                    return ErrorMessages.InvalidQuantity(request.StockQuantity);
+                if (request.Quantity <= 0)
+                    return ErrorMessages.InvalidQuantity(request.Quantity);
 
                 if (string.IsNullOrWhiteSpace(request.ProductName))
                     return ErrorMessages.InvalidName(request.ProductName);
@@ -35,7 +34,7 @@ namespace InventoryOrderAPI.Services
                 var product = new Product()
                 {
                     Price = request.Price,
-                    StockQuantity = request.StockQuantity,
+                    Quantity = request.Quantity,
                     ProductName = request.ProductName
                 };
                 await _productRepository.AddAsync(product);
@@ -48,24 +47,80 @@ namespace InventoryOrderAPI.Services
             }
         }
 
-        public Task<Result> DeleteAsync(int id)
+        public async Task<Result> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var result = await _productRepository.GetByIdAsync(id);
+            if (result == null)
+                return ErrorMessages.ProductNotFound(id);
+            try
+            {
+                await _productRepository.DeleteAsync(id);
+                return Result.Succeeded();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UnknownError");
+                return ErrorMessages.UnknownError(ex.Message);
+            }
+        }
+        public async Task<Result<List<Product>>> GetAllAsync()
+        {
+            try
+            {
+                var result = await _productRepository.GetAllAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UnknownError");
+                return ErrorMessages.UnknownError(ex.Message);
+            }
         }
 
-        public Task<Result<List<Product>>> GetAllAsync()
+        public async Task<Result<Product>> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var result = await _productRepository.GetByIdAsync(id);
+
+            try
+            {
+                if (result == null)
+                {
+                    return ErrorMessages.ProductNotFound(id);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UnknownError");
+                return ErrorMessages.UnknownError(ex.Message);
+            }
         }
 
-        public Task<Result<Product>> GetByIdAsync(int id)
+        public async Task<Result<Product>> UpdateAsync(int id, UpdateProductRequestModel request)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var result = await _productRepository.GetByIdAsync(id);
+                if (result == null)
+                    return ErrorMessages.OrderNotFound(id);
 
-        public Task<Result<Product>> UpdateAsync(int id, UpdateProductRequestModel request)
-        {
-            throw new NotImplementedException();
+                if (request.Quantity <= 0)
+                    return ErrorMessages.InvalidQuantity(request.Quantity);
+
+                if (request.Price <= 0)
+                    return ErrorMessages.InvalidPrice(request.Price);
+
+                result.Quantity = request.Quantity;
+                result.Price = request.Price;
+
+                await _productRepository.UpdateAsync(result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UnknownError");
+                return ErrorMessages.UnknownError(ex.Message);
+            }
         }
     }
 }

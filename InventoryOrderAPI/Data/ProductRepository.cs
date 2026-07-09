@@ -15,15 +15,15 @@ namespace InventoryOrderAPI.Data
         public async Task AddAsync(Product product)
         {
             using var connection = _connectionFactory.CreateConnection();
-            var sql = @"INSERT INTO Product (ProductName, Price, StockQuantity) 
-                        VALUES (@ProductName, @Price, @StockQuantity);";
+            var sql = @"INSERT INTO Product (ProductName, Price, Quantity) 
+                        VALUES (@ProductName, @Price, @Quantity);";
             await connection.ExecuteAsync(sql, product);
         }
 
         public async Task<List<Product>> GetAllAsync()
         {
             using var connection = _connectionFactory.CreateConnection();
-            var sql = @"select ProductId, ProductName,Price, StockQuantity from Product";
+            var sql = @"select ProductId, ProductName,Price, Quantity from Product";
             var result = await connection.QueryAsync<Product>(sql);
             return result.ToList();
         }
@@ -31,11 +31,11 @@ namespace InventoryOrderAPI.Data
         public async Task<Product?> GetByIdAsync(int id)
         {
             using var connection = _connectionFactory.CreateConnection();
-            var sql = @"select ProductId, ProductName, Price, StockQuantity from Product where ProductId = @Id";
+            var sql = @"select ProductId, ProductName, Price, Quantity from Product where ProductId = @Id";
             var result = await connection.QueryFirstOrDefaultAsync<Product>(sql, new { Id = id });
             return result;
         }
-        
+
         public async Task DeleteAsync(int id)
         {
             using var connection = _connectionFactory.CreateConnection();
@@ -49,7 +49,7 @@ namespace InventoryOrderAPI.Data
             var sql = @"UPDATE PRODUCT
                         SET ProductName = @ProductName,
                             Price = @Price,
-                            StockQuantity = @StockQuantity
+                            Quantity = @Quantity
                         WHERE ProductId = @ProductId";
             await connection.ExecuteAsync(sql, product);
         }

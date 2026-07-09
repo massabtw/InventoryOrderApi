@@ -1,11 +1,11 @@
-﻿using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace InventoryOrderAPI.Data
 {
     public class DbConnectionFactory
     {
-        private readonly string _connectionString; 
+        private readonly string _connectionString;
 
         public DbConnectionFactory(IConfiguration configuration)
         {

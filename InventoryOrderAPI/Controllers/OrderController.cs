@@ -1,9 +1,7 @@
-﻿using InventoryOrderAPI.Data;
-using InventoryOrderAPI.Extensions;
+﻿using InventoryOrderAPI.Extensions;
 using InventoryOrderAPI.Interfaces;
 using InventoryOrderAPI.Models.Order;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace InventoryOrderAPI.Controllers
 {
@@ -13,7 +11,7 @@ namespace InventoryOrderAPI.Controllers
     {
         private readonly IOrderService _orderService;
 
-        public OrderController(OrderRepository orderRepository, IOrderService orderService)
+        public OrderController(IOrderService orderService)
         {
             _orderService = orderService;
         }
@@ -26,14 +24,14 @@ namespace InventoryOrderAPI.Controllers
         }
 
         [HttpGet]
-        public async Task <IActionResult> Get()
+        public async Task<IActionResult> Get()
         {
             var result = await _orderService.GetAllAsync();
             return result.Ok();
         }
 
         [HttpGet("{id}")]
-        public async Task <IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var result = await _orderService.GetByIdAsync(id);
             return result.Ok();
