@@ -52,15 +52,22 @@ namespace InventoryOrderAPI.Services
         public async Task<Result> DeleteAsync(int id)
         {
             var existing = await _orderRepository.GetByIdAsync(id);
-            if (existing == null)
-            {
-                _logger.LogInformation("Order {OrderId} NotFound", id);
-                return ErrorMessages.OrderNotFound(id);
-            }
 
-            await _orderRepository.DeleteAsync(id);
-            _logger.LogInformation("Order {OrderId} deleted", id);
-            return Result.Succeeded();
+            try
+            {
+                if (existing == null)
+                {
+                    _logger.LogInformation("Order {OrderId} NotFound", id);
+                    return ErrorMessages.OrderNotFound(id);
+                }
+                await _orderRepository.DeleteAsync(id);
+                return Result.Succeeded();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "UnknownError");
+                return ErrorMessages.UnknownError(ex.Message);
+            }
         }
 
         public async Task<Result<List<Order>>> GetAllAsync()
@@ -90,6 +97,7 @@ namespace InventoryOrderAPI.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "UnknownError");
                 return ErrorMessages.UnknownError(ex.Message);
             }
         }
@@ -116,8 +124,8 @@ namespace InventoryOrderAPI.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "UnknownError");
                 return ErrorMessages.UnknownError(ex.Message);
-
             }
         }
     }

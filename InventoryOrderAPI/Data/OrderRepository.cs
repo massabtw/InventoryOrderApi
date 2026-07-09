@@ -16,9 +16,9 @@ namespace InventoryOrderAPI.Data
             var sql = @"INSERT INTO [Order] (OrderDate, ProductId, Quantity, TotalValue)
                        VALUES (@OrderDate, @ProductId, @Quantity, @TotalValue);";
             await connection.ExecuteAsync(sql, order);
-                            
+
         }
-        public async Task <List<Order>> GetAllAsync()
+        public async Task<List<Order>> GetAllAsync()
         {
             using var connection = _connectionFactory.CreateConnection();
             var sql = @"select OrderID, OrderDate, ProductId, Quantity, TotalValue from [Order] ";
@@ -26,7 +26,7 @@ namespace InventoryOrderAPI.Data
             return result.ToList();
         }
 
-        public async Task<Order?> GetByIdAsync(int id)  
+        public async Task<Order?> GetByIdAsync(int id)
         {
             using var connection = _connectionFactory.CreateConnection();
             var sql = @"select OrderID, OrderDate, ProductId, Quantity, TotalValue from [Order] WHERE OrderId = @Id";
