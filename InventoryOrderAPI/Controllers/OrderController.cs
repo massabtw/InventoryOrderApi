@@ -49,7 +49,6 @@ namespace InventoryOrderAPI.Controllers
         {
             var result = await _orderService.UpdateAsync(id, request);
             return result.Ok();
-
         }
 
     }
