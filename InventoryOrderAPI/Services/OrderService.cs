@@ -37,9 +37,8 @@ namespace InventoryOrderAPI.Services
                     Quantity = request.Quantity,
                     TotalValue = request.ProductPrice * request.Quantity,
                     OrderDate = DateTime.UtcNow
-
                 };
-                await _orderRepository.AddSync(order);
+                await _orderRepository.AddAsync(order);
                 return order;
             }
             catch (Exception ex)

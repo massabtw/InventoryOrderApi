@@ -37,7 +37,6 @@ namespace InventoryOrderAPI.Helpers
             Code = "UnknownError",
             Message = message,
             MessageCustomer = "Erro desconhecido"
-
         };
 
         public static ErrorModel InvalidName(string name) => new ErrorModel()
@@ -45,7 +44,6 @@ namespace InventoryOrderAPI.Helpers
             Code = "InvalidName",
             Message = $"Invalid{name} Name",
             MessageCustomer = "Nome invalido"
-
         };
     }
 }

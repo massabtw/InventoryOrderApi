@@ -3,14 +3,14 @@ using InventoryOrderAPI.Entities;
 
 namespace InventoryOrderAPI.Data
 {
-    public class OrderRepository
+    public class OrderRepository : InventoryOrderAPI.Interfaces.IOrderRepository
     {
         private readonly DbConnectionFactory _connectionFactory;
         public OrderRepository(DbConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
         }
-        public async Task AddSync(Order order)
+        public async Task AddAsync(Order order)
         {
             using var connection = _connectionFactory.CreateConnection();
             var sql = @"INSERT INTO [Order] (OrderDate, ProductId, Quantity, TotalValue)
@@ -21,7 +21,7 @@ namespace InventoryOrderAPI.Data
         public async Task<List<Order>> GetAllAsync()
         {
             using var connection = _connectionFactory.CreateConnection();
-            var sql = @"select OrderID, OrderDate, ProductId, Quantity, TotalValue from [Order] ";
+            var sql = @"SELECT OrderID, OrderDate, ProductId, Quantity, TotalValue FROM [Order] ";
             var result = await connection.QueryAsync<Order>(sql);
             return result.ToList();
         }
@@ -29,7 +29,7 @@ namespace InventoryOrderAPI.Data
         public async Task<Order?> GetByIdAsync(int id)
         {
             using var connection = _connectionFactory.CreateConnection();
-            var sql = @"select OrderID, OrderDate, ProductId, Quantity, TotalValue from [Order] WHERE OrderId = @Id";
+            var sql = @"SELECT OrderID, OrderDate, ProductId, Quantity, TotalValue FROM [Order] WHERE OrderId = @Id";
             var result = await connection.QueryFirstOrDefaultAsync<Order>(sql, new { Id = id });
             return result;
         }
@@ -44,7 +44,7 @@ namespace InventoryOrderAPI.Data
         public async Task UpdateAsync(Order order)
         {
             using var connection = _connectionFactory.CreateConnection();
-            var sql = @"UPDATE [ORDER]
+            var sql = @"UPDATE [Order]
                         SET OrderDate = @OrderDate,
                             ProductId = @ProductId,
                             Quantity = @Quantity,

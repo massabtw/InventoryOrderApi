@@ -1,10 +1,12 @@
 ﻿using Dapper;
 using InventoryOrderAPI.Entities;
+using InventoryOrderAPI.Interfaces;
 
 namespace InventoryOrderAPI.Data
 {
-    public class ProductRepository
+    public class ProductRepository : IProductRepository
     {
+
         private readonly DbConnectionFactory _connectionFactory;
 
         public ProductRepository(DbConnectionFactory connectionFactory)
