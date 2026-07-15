@@ -1,3 +1,7 @@
 <Solution>
-  <Project Path="InventoryOrderAPI/InventoryOrderAPI.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/InventoryOrder.API/InventoryOrder.API.csproj" />
+    <Project Path="src/InventoryOrder.Application/InventoryOrder.Application.csproj" />
+    <Project Path="src/InventoryOrder.Domain/InventoryOrder.Domain.csproj" />
+  </Folder>
 </Solution>
